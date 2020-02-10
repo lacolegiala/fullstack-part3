@@ -5,6 +5,12 @@ let morgan = require('morgan')
 
 app.use(morgan('tiny'))
 
+const cors = require('cors')
+
+app.use(cors())
+app.use(express.json())
+app.use(express.static('build'))
+
 let persons = [
   {
     "name": "Arto Hellas",
@@ -65,7 +71,7 @@ app.post('/api/persons', (request, response) => {
   
   const body = request.body
   
-  const randomNumber = Math.random() * (9999999999 - 1000000000) + 1000000000
+  const randomNumber = Math.floor(Math.random() * 9000000000) + 1000000000;
   personNumber = randomNumber.toString()
   
   const person = {
@@ -87,7 +93,6 @@ app.post('/api/persons', (request, response) => {
   }
   persons = persons.concat(person)
 
-  
   console.log(person)
 
   response.json(person)
@@ -97,7 +102,7 @@ app.get('/api/persons', (request, response) => {
   response.json(persons)
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
