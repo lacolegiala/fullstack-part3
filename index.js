@@ -55,18 +55,32 @@ app.delete('/api/persons/:id', (request, response) => {
   response.status(204).end()
 })
 
+const newArray = persons.map(person => person.name)
+
 app.post('/api/persons', (request, response) => {
-  // person.id = persons.length + 1
+  
+  const body = request.body
+  
   const randomNumber = Math.random() * (9999999999 - 1000000000) + 1000000000
   personNumber = randomNumber.toString()
-  const body = request.body
-
+  
   const person = {
     name: body.name,
     number: personNumber,
     id: persons.length + 1
   }
   
+  if (!person.name || !person.number) {
+    return response.status(400).json({ 
+      error: 'name or number missing' 
+    })
+  }
+
+  if (newArray.includes(person.name)) {
+    return response.status(400).json({ 
+      error: 'name already exists' 
+    })
+  }
   persons = persons.concat(person)
   console.log(person)
 
