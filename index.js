@@ -66,7 +66,7 @@ app.delete('/api/persons/:id', (request, response) => {
   response.status(204).end()
 })
 
-const newArray = persons.map(person => person.name)
+
 
 app.post('/api/persons', (request, response) => {
   
@@ -80,6 +80,8 @@ app.post('/api/persons', (request, response) => {
     number: personNumber,
     id: persons.length + 1
   }
+
+  const newArray = persons.map(person => person.name)
   
   if (!person.name || !person.number) {
     return response.status(400).json({ 
