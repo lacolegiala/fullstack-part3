@@ -6,11 +6,11 @@ let morgan = require('morgan')
 app.use(morgan('tiny'))
 
 const cors = require('cors')
+const { request, response } = require('express')
 
 app.use(express.static('build'))
 app.use(cors())
 app.use(express.json())
-app.use(express.static('build'))
 
 let persons = [
   {
@@ -35,7 +35,6 @@ let persons = [
   }
 ]
 
-app.use(express.json())
 
 app.get('/api/info', (request, response) => {
   const date = new Date();
@@ -72,17 +71,18 @@ app.post('/api/persons', (request, response) => {
   
   const body = request.body
   
-  const randomNumber = Math.floor(Math.random() * 9000000000) + 1000000000;
-  personNumber = randomNumber.toString()
+  // const randomNumber = Math.floor(Math.random() * 9000000000) + 1000000000;
+  // personNumber = randomNumber.toString()
   
   const person = {
     name: body.name,
-    number: personNumber,
+    number: body.number,
     id: persons.length + 1
   }
 
   const newArray = persons.map(person => person.name)
   
+
   if (!person.name || !person.number) {
     return response.status(400).json({ 
       error: 'name or number missing' 
@@ -94,11 +94,22 @@ app.post('/api/persons', (request, response) => {
       error: 'name already exists' 
     })
   }
-  persons = persons.concat(person)
+  persons = persons.concat(person)  
 
-  console.log(person)
 
   response.json(person)
+})
+
+app.put('/api/persons/:id', (request, response) => {
+  const body = request.body
+  const updatedContact = {
+    name: body.name,
+    number: body.number,
+    id: body.id
+  }
+
+  persons = persons.map(person => person.id !== updatedContact.id ? person : updatedContact)
+  response.json(updatedContact)
 })
 
 app.get('/api/persons', (request, response) => {
