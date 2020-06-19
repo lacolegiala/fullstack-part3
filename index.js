@@ -102,10 +102,11 @@ app.post('/api/persons', (request, response) => {
 
 app.put('/api/persons/:id', (request, response) => {
   const body = request.body
+
   const updatedContact = {
     name: body.name,
     number: body.number,
-    id: body.id
+    id: parseInt(request.params.id)
   }
 
   persons = persons.map(person => person.id !== updatedContact.id ? person : updatedContact)
