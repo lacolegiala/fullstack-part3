@@ -3,7 +3,9 @@ const app = express()
 
 let morgan = require('morgan')
 
-app.use(morgan('tiny'))
+morgan.token('body', function (req, res) {return JSON.stringify(req.body); })
+
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
 const cors = require('cors')
 const { request, response } = require('express')
