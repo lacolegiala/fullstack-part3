@@ -26,7 +26,17 @@ const newContact = new Person({
   number: process.argv[4]
 })
 
-newContact.save().then(response => {
-  console.log('new contact saved!')
-  mongoose.connection.close()
-})
+if (process.argv.length <= 3) {
+  Person.find({}).then(result => {
+    result.forEach(person => {
+      console.log(person)
+    })
+    mongoose.connection.close()
+  })
+}
+else {
+  newContact.save().then(response => {
+    console.log('new contact saved!')
+    mongoose.connection.close()
+  })
+}
