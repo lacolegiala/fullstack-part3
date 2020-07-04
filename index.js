@@ -1,5 +1,23 @@
 const express = require('express')
 const app = express()
+const mongoose = require('mongoose')
+
+const password = process.env.password
+
+const url =
+  `mongodb+srv://sofia:${password}@cluster0-zqlrn.mongodb.net/phonebook?retryWrites=true`
+
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
+.catch(error => console.log(url, error))
+
+const personSchema = new mongoose.Schema({
+  name: String,
+  number: String
+})
+
+const Person = mongoose.model('Person', personSchema)
+
+
 
 let morgan = require('morgan')
 
@@ -116,7 +134,9 @@ app.put('/api/persons/:id', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 const PORT = process.env.PORT || 3001
