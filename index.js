@@ -1,22 +1,8 @@
 const express = require('express')
 const app = express()
-const mongoose = require('mongoose')
+require('dotenv').config()
 
-const password = process.env.password
-
-const url =
-  `mongodb+srv://sofia:${password}@cluster0-zqlrn.mongodb.net/phonebook?retryWrites=true`
-
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
-.catch(error => console.log(url, error))
-
-const personSchema = new mongoose.Schema({
-  name: String,
-  number: String
-})
-
-const Person = mongoose.model('Person', personSchema)
-
+const Person = require('./models/person')
 
 
 let morgan = require('morgan')
@@ -91,33 +77,21 @@ app.post('/api/persons', (request, response) => {
   
   const body = request.body
   
-  // const randomNumber = Math.floor(Math.random() * 9000000000) + 1000000000;
-  // personNumber = randomNumber.toString()
+  if (body.name === undefined || body.number === undefined) {
+    return response.status(400).json({ error: 'content missing' })
+  }
   
-  const person = {
+  const person = new Person({
     name: body.name,
     number: body.number,
     id: persons.length + 1
-  }
+  })
 
-  const newArray = persons.map(person => person.name)
-  
+  //TODO: korjaa tämä. Nyt valittaa POST 400 Bad Request
 
-  if (!person.name || !person.number) {
-    return response.status(400).json({ 
-      error: 'name or number missing' 
-    })
-  }
-
-  if (newArray.includes(person.name)) {
-    return response.status(400).json({ 
-      error: 'name already exists' 
-    })
-  }
-  persons = persons.concat(person)  
-
-
-  response.json(person)
+  person.save().then(savedContact => {
+    response.json(savedContact.toJSON())
+  })
 })
 
 app.put('/api/persons/:id', (request, response) => {
