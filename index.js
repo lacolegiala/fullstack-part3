@@ -54,13 +54,9 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
-  if (person) {
+  Person.findById(request.params.id).then(person => {
     response.json(person)
-  } else {
-    response.status(404).end()
-  }
+  })
 
 })
 
@@ -78,16 +74,14 @@ app.post('/api/persons', (request, response) => {
   const body = request.body
   
   if (body.name === undefined || body.number === undefined) {
-    return response.status(400).json({ error: 'content missing' })
+    return response.status(400).json({ error: 'name or number missing' })
   }
   
   const person = new Person({
     name: body.name,
     number: body.number,
-    id: persons.length + 1
   })
 
-  //TODO: korjaa tämä. Nyt valittaa POST 400 Bad Request
 
   person.save().then(savedContact => {
     response.json(savedContact.toJSON())
@@ -97,14 +91,16 @@ app.post('/api/persons', (request, response) => {
 app.put('/api/persons/:id', (request, response) => {
   const body = request.body
 
-  const updatedContact = {
+  const person = {
     name: body.name,
-    number: body.number,
-    id: parseInt(request.params.id)
+    number: body.number
   }
 
-  persons = persons.map(person => person.id !== updatedContact.id ? person : updatedContact)
-  response.json(updatedContact)
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then(updatedContact => {
+      response.json(updatedContact)
+    })
+    .catch(error => next(error))
 })
 
 app.get('/api/persons', (request, response) => {
