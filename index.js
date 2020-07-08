@@ -44,9 +44,9 @@ let persons = [
 
 app.get('/api/info', (request, response) => {
   const date = new Date();
-
-  response.send(`Phonebook has info of ${persons.length} people ${date}`)
-  response.json(date)
+  Person.find({}).count().then(numberOfpersons => {
+    response.json('Phonebook has the contact info of ' + numberOfpersons + ' people ' + date)
+  })
 })
 
 app.get('/', (request, response) => {
