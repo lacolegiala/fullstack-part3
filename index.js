@@ -7,7 +7,7 @@ const Person = require('./models/person')
 
 let morgan = require('morgan')
 
-morgan.token('body', function (req, res) {return JSON.stringify(req.body); })
+morgan.token('body', function (req, res) {return JSON.stringify(req.body) })
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
@@ -18,39 +18,17 @@ app.use(express.static('build'))
 app.use(cors())
 app.use(express.json())
 
-let persons = [
-  {
-    "name": "Arto Hellas",
-    "number": "040-123456",
-    "id": 1
-  },
-  {
-    "name": "Ada Lovelace",
-    "number": "39-44-5323523",
-    "id": 2
-  },
-  {
-    "name": "Dan Abramov",
-    "number": "12-43-234345",
-    "id": 3
-  },
-  {
-    "name": "Mary Poppendieck",
-    "number": "39-23-6423123",
-    "id": 4
-  }
-]
 
 
 app.get('/api/info', (request, response) => {
-  const date = new Date();
+  const date = new Date()
   Person.find({}).count().then(numberOfpersons => {
     response.json('Phonebook has the contact info of ' + numberOfpersons + ' people ' + date)
   })
 })
 
 app.get('/', (request, response) => {
-  response.send(`Frontpage`)
+  response.send('Frontpage')
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
@@ -62,8 +40,8 @@ app.get('/api/persons/:id', (request, response, next) => {
       response.status(404).end()
     }
   })
-  .catch(error => next(error))
-  })
+    .catch(error => next(error))
+})
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
@@ -92,10 +70,10 @@ app.post('/api/persons', (request, response, next) => {
   person.save().then(savedContact => {
     response.json(savedContact.toJSON())
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
-app.put('/api/persons/:id', (request, response) => {
+app.put('/api/persons/:id', (request, response, next) => {
   const body = request.body
 
   const person = {
@@ -114,7 +92,7 @@ app.get('/api/persons', (request, response, next) => {
   Person.find({}).then(persons => {
     response.json(persons)
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {
