@@ -5,14 +5,14 @@ mongoose.set('useCreateIndex', true);
 const url = process.env.MONGODB_URI
 
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
-.then(result => {
-  console.log('connected to MongoDB')
-})
-.catch(error => console.log('Error while connecting', error))
+  .then(result => {
+    console.log('connected to MongoDB')
+  })
+  .catch(error => console.log('Error while connecting', error))
 
 const personSchema = new mongoose.Schema({
-  name: {type: String, required: true, unique: true},
-  number: {type: String, required: true}
+  name: { type: String, required: true, unique: true },
+  number: { type: String, required: true }
 })
 
 personSchema.set('toJSON', {
